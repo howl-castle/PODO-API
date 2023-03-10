@@ -20,6 +20,8 @@ from django.contrib.auth.models import *
 from rest_framework import routers, serializers, viewsets, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from apiapp import views
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -35,8 +37,27 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-swagger-ui'),
-    path('admin/', admin.site.urls),
 
+    path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('admin/', admin.site.urls),
+    path('/article_list',views.article_list, name = 'article_list'),
+    path('/article_detail/<int:pk>',views.article_detail, name = 'article_detail'),
+    path('/article_create',views.article_create, name = 'article_create'),
+    path('/article_update/<int:pk>',views.article_update, name = 'article_update'),
+    path('/article_delete/<int:pk>',views.article_delete, name = 'article_delete'),
+    path('/question_list',views.question_list, name = 'question_list'),
+    path('/question_detail/<int:pk>',views.question_detail, name = 'question_detail'),
+    path('/question_create',views.question_create, name = 'question_create'),
+    path('/question_update/<int:pk>',views.question_update, name = 'question_update'),
+    path('/question_delete/<int:pk>',views.question_delete, name = 'question_delete'),
+    path('/comment_list',views.comment_list, name = 'comment_list'),
+    path('/comment_detail/<int:pk>',views.comment_detail, name = 'comment_detail'),
+    path('/comment_create',views.comment_create, name = 'comment_create'),
+    path('/comment_update/<int:pk>',views.comment_update, name = 'comment_update'),
+    path('/comment_delete/<int:pk>',views.comment_delete, name = 'comment_delete'),
+
+
+    
 ]

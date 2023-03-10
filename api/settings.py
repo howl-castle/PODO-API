@@ -36,12 +36,10 @@ ALLOWED_HOSTS = [
     'gleaming-cove-378613.ue.r.appspot.com',
     '127.0.0.1',
     'localhost',
-    
+    ''
 ]
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -90,15 +88,15 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 # default setup
-"""
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-"""
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+"""
 DATABASES = {
 
     #info_schema as default
@@ -148,7 +146,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
+"""
 
 
 # Password validation
