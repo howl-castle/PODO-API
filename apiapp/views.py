@@ -4,6 +4,17 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+# signup
+
+# add phantom wallet
+
+# singin
+
+# signout
+
+# 
+
+"""
 # article list
 @api_view (['GET'])
 def article_list(request) : 
@@ -128,7 +139,7 @@ def question_detail(request, pk) :
 
 # create answer
 @api_view(['POST'])
-def create_answer(request, pk) :
+def answer_create(request, pk) :
     question = Question.objects.get(pk=pk)
     answer = Answer.objects.create(
         question = question,
@@ -137,7 +148,7 @@ def create_answer(request, pk) :
 
 # update answer
 @api_view(['PUT'])
-def update_answer(request, pk) :
+def answer_update(request, pk) :
     answer = Answer.objects.get(pk=pk)
     answer.content = request.data['content']
     answer.save()
@@ -145,7 +156,7 @@ def update_answer(request, pk) :
 
 # delete answer
 @api_view(['DELETE'])
-def delete_answer(request, pk) :
+def answer_delete(request, pk) :
     answer = Answer.objects.get(pk=pk)
     answer.delete()
     return Response(request, answer)
@@ -157,9 +168,18 @@ def answer_list(request, pk) :
     answers = question.answer_set.all()
     return Response(request, answers)
 
+# answer detail
+@api_view(['GET'])
+def answer_detail(request, pk) :
+    answer = Answer.objects.get(pk=pk)
+    return Response(request, answer)
 
+# answer choose
+@api_view(['PUT'])
+def answer_choose(request, pk) :
+    answer = Answer.objects.get(pk=pk)
+    answer.STATUS_CHOICES = 'CHOSEN'
+    answer.save()
+    return Response(request, answer)
 
-
-
-
-
+"""
