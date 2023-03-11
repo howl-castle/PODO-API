@@ -43,6 +43,11 @@ urlpatterns = [
     path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
 
+    path('signup/',views.signup, name = 'signup'),
+    path('addwallet/',views.integrate_phantom_wallet, name = 'integrate_phantom_wallet'),
+    path('signin/',views.signin, name = 'signin'),
+    path('signout/',views.signout, name = 'signout'),
+
 #    path('article_list',views.article_list, name = 'article_list'),
 #    path('article_detail/<int:pk>',views.article_detail, name = 'article_detail'),
 #    path('article_create',views.article_create, name = 'article_create'),
