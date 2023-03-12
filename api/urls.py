@@ -44,7 +44,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('signup/',views.signup, name = 'signup'),
-    path('addwallet/',views.integrate_phantom_wallet, name = 'integrate_phantom_wallet'),
+    path('addwallet/<int:id>/',views.integrate_phantom_wallet, name = 'integrate_phantom_wallet'),
     path('signin/',views.signin, name = 'signin'),
     path('signout/',views.signout, name = 'signout'),
 

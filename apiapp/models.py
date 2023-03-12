@@ -1,26 +1,25 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
-
-class PodoUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+class User(AbstractUser):
     INTEREST_CHOICES = (
 		('ai', 'Artificial Intelligence'),
-        ('w3', 'Web 3.0'),
+        ('web3', 'Web 3.0'),
         ('design', 'Design'),
         ('investment', 'Investment'),
-        ('si', 'Self-Improvement'),
-        )
+        ('self_impv', 'Self-Improvement'),
+    )
     interest = models.CharField(max_length=100, choices=INTEREST_CHOICES)
     walletAddress = models.ForeignKey('Wallet', related_name='walletAddress', on_delete=models.CASCADE, null=True, blank=True)
-    nickname = models.CharField(max_length=100, null=True)
-    specialty = models.CharField(max_length=100, null=True)
+    nickname = models.CharField(max_length=100)
+    specialty = models.CharField(max_length=100)
 
     def __str__(self):
         return self.user.username
 
+
 class Wallet(models.Model):
-    user = models.ForeignKey(PodoUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.TextField(max_length=100)
     balance = models.FloatField()
     history = models.TextField(max_length=1000, null=True, blank=True)

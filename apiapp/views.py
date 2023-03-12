@@ -7,11 +7,16 @@ from rest_framework.response import Response
 # signup
 @api_view (['POST'])
 def signup(request):
+    
     return render(request)
 
 # add phantom wallet
 @api_view (['POST'])
-def integrate_phantom_wallet(request):
+def integrate_phantom_wallet(request, id):
+    id = user.id
+    user = User.objects.get(pk=request.data['user_id'])
+    wallet_address = request.data['wallet_address']
+    user.save()
     return render(request)
 
 # singin

@@ -12,22 +12,41 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import io
 import os
-from urllib.parse import urlparse
-
-# import environ
-# from google.cloud import secretmanager
-
 from pathlib import Path
+from urllib.parse import urlparse
+import environ
+
+# from google.cloud import secretmanager
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+env = environ.Env(DEBUG=(bool, False))
+env_file = os.path.join(BASE_DIR, ".env")
+
+if os.path.isfile(env_file):
+    # Use a local secret file, if provided
+    env.read_env(env_file)
+
+elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
+    # Pull secrets from Secret Manager
+    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+    client = secretmanager.SecretManagerServiceClient()
+    settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
+    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
+    payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
+
+    env.read_env(io.StringIO(payload))
+
+else:
+    raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ssqwrwioo6o=iexp+m$h!+$ylp2imz*ldjm5#k507%sl-wv96*'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +57,22 @@ ALLOWED_HOSTS = [
     'localhost',
     ''
 ]
+
+# SECURITY WARNING: It's recommended that you use this when
+# running in production. The URL will be known once you first deploy
+# to App Engine. This code takes the URL and converts it to both these settings formats.
+APPENGINE_URL = env("APPENGINE_URL", default=None)
+
+if APPENGINE_URL:
+    # Ensure a scheme is present in the URL before it's processed.
+    if not urlparse(APPENGINE_URL).scheme:
+        APPENGINE_URL = f"https://{APPENGINE_URL}"
+
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+    SECURE_SSL_REDIRECT = True
+else:
+    ALLOWED_HOSTS = ["*"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -83,12 +118,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
 # default setup
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -96,62 +127,8 @@ DATABASES = {
     }
 }
 
-"""
-DATABASES = {
-
-    #info_schema as default
-
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'information_schema',
-        'USER': 'api',
-        'PASSWORD': 'apiserving82',
-        'HOST': '35.193.64.178',
-        'PORT': '3306',
-    },
-
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mysql',
-        'USER': 'api',
-        'PASSWORD': 'apiserving82',
-        'HOST': '35.193.64.178',
-        'PORT': '3306',
-    },
-
-    'performance_schema': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'performance_schema',
-        'USER': 'api',
-        'PASSWORD': 'apiserving82',
-        'HOST': '35.193.64.178',
-        'PORT': '3306',
-    },
-
-    'sys': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sys',
-        'USER': 'api',
-        'PASSWORD': 'apiserving82',
-        'HOST': '35.193.64.178',
-        'PORT': '3306',
-    },
-
-    'users': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'users',
-        'USER': 'api',
-        'PASSWORD': 'apiserving82',
-        'HOST': '35.193.64.178',
-        'PORT': '3306',
-    }
-}
-"""
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -169,8 +146,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -179,16 +154,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_ROOT = "static"
 STATIC_URL = "/static/"
 STATICFILES_DIRS = []
 
-
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # djangorestframework
@@ -199,3 +169,5 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
+# custom user model
+AUTH_USER_MODEL = 'apiapp.User'
