@@ -17,8 +17,7 @@
 ```
    python manage.py runserver
 ```
- 
-   # gcp deploy
+   3. # gcp deploy
 ```
    gcloud app deploy
 ```   
