@@ -8,12 +8,12 @@
  
 2. Development
 
-   # install django, drf and packages
+   1. install django, drf and packages
 ```
    pip install django
    pip install -r requirements.txt
-   
-   # runserver
+```
+   2. runserver
 ```
    python manage.py runserver
 ```
@@ -22,3 +22,8 @@
 ```
    gcloud app deploy
 ```   
+
+3. createsuperuser
+```
+    python manage.py createsuperuser
+```
